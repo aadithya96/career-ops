@@ -1,0 +1,399 @@
+# Portal Scanner Configuration
+# Used by /career-ops scan to discover new offers automatically.
+#
+# Strategy (3 levels):
+#   1. Playwright → careers_url of each company (real-time, reliable)
+#   2. Greenhouse API → structured JSON (fast, Greenhouse-only)
+#   3. WebSearch with site: filters (broad discovery, may be stale)
+#
+# IMPORTANT: Each company in tracked_companies MUST have careers_url.
+#   Prefer the BRANDED company careers URL whenever available; use ATS-hosted URL only as fallback.
+#   ✅ https://careers.infosys.com   ⚠️ https://infosys.wd3.myworkdayjobs.com (fallback only)
+#   Exception: ATS-hosted careers_url is acceptable when no branded careers page exists.
+#
+# HOW TO CUSTOMIZE:
+#   1. Copy this file to portals.yml in the project root
+#   2. Edit title_filter.positive with YOUR target role keywords
+#   3. Add/remove companies in tracked_companies
+#   4. Adjust search_queries for your preferred job boards
+#   5. Set enabled: false on companies you don't care about
+
+# -- Title filter --
+# The scanner uses these keywords to decide if a title is relevant.
+# At least 1 positive must match AND 0 negatives must match (case-insensitive).
+
+title_filter:
+  positive:
+    # [CUSTOMIZE] .NET / C# core keywords
+    - ".NET"
+    - "C#"
+    - "ASP.NET"
+    - ".NET Core"
+    - ".NET Framework"
+    - "dotnet"
+    - "dot net"
+    # -- Microsoft stack --
+    - "WPF"
+    - "WCF"
+    - "Blazor"
+    - "Entity Framework"
+    - "Azure"
+    - "MAUI"
+    - "Xamarin"
+    - "SignalR"
+    - "Web API"
+    - "MVC"
+    - "LINQ"
+    # -- Role titles --
+    - ".NET Developer"
+    - ".NET Engineer"
+    - "C# Developer"
+    - "Full Stack .NET"
+    - "Backend Developer"
+    - "Software Engineer"
+    - "Solutions Architect"
+    - "Technical Lead"
+    - "Tech Lead"
+  negative:
+    # [CUSTOMIZE] Exclude non-relevant roles
+    - "Junior"
+    - "Intern"
+    - "Trainee"
+    - "Fresher"
+    - "iOS"
+    - "Android"
+    - "PHP"
+    - "Ruby"
+    - "Python"
+    - "Golang"
+    - "Rust"
+    - "Embedded"
+    - "Firmware"
+    - "FPGA"
+    - "ASIC"
+    - "Blockchain"
+    - "Web3"
+    - "Crypto"
+    - "Salesforce Admin"
+    - "SAP "
+    - "Oracle EBS"
+    - "Mainframe"
+    - "COBOL"
+  seniority_boost:
+    # These prefixes add relevance but are not required
+    - "Senior"
+    - "Staff"
+    - "Principal"
+    - "Lead"
+    - "Head"
+    - "Director"
+    - "Architect"
+
+# -- Search queries --
+# Each query triggers a WebSearch. Use site: to filter by portal.
+# Focused on India-based .NET/C# roles.
+
+search_queries:
+  # -- Naukri (India's largest job board) --
+  - name: Naukri — .NET Developer India
+    query: 'site:naukri.com ".NET Developer" OR "C# Developer" OR "ASP.NET" India senior'
+    enabled: true
+
+  - name: Naukri — .NET Engineer India
+    query: 'site:naukri.com ".NET Engineer" OR ".NET Core" OR "Full Stack .NET" Noida OR Gurgaon OR Bangalore OR Hyderabad'
+    enabled: true
+
+  - name: Naukri — .NET Tech Lead India
+    query: 'site:naukri.com ".NET" "Technical Lead" OR "Tech Lead" OR "Architect" India senior'
+    enabled: true
+
+  # -- LinkedIn India --
+  - name: LinkedIn — .NET India
+    query: 'site:linkedin.com/jobs ".NET Developer" OR "C# Developer" India remote OR Noida OR Gurgaon'
+    enabled: true
+
+  - name: LinkedIn — .NET Core India
+    query: 'site:linkedin.com/jobs ".NET Core" OR "ASP.NET Core" OR "Azure .NET" India senior'
+    enabled: true
+
+  # -- Indeed India --
+  - name: Indeed India — .NET Developer
+    query: 'site:in.indeed.com ".NET Developer" OR ".NET Engineer" OR "C# Developer" senior India'
+    enabled: true
+
+  - name: Indeed India — .NET Architect
+    query: 'site:in.indeed.com ".NET Architect" OR "Solutions Architect .NET" OR "Technical Lead .NET" India'
+    enabled: true
+
+  # -- Foundit (Monster India) --
+  - name: Foundit — .NET India
+    query: 'site:foundit.in ".NET Developer" OR "C# Developer" OR ".NET Core" India senior'
+    enabled: true
+
+  # -- Instahyre --
+  - name: Instahyre — .NET India
+    query: 'site:instahyre.com ".NET" OR "C#" OR "ASP.NET" India senior engineer'
+    enabled: true
+
+  # -- Greenhouse (global ATS, India roles) --
+  - name: Greenhouse — .NET India
+    query: 'site:boards.greenhouse.io OR site:job-boards.greenhouse.io ".NET" OR "C#" OR "ASP.NET" India remote'
+    enabled: true
+
+  # -- Lever (global ATS, India roles) --
+  - name: Lever — .NET India
+    query: 'site:jobs.lever.co ".NET" OR "C#" OR ".NET Core" India remote'
+    enabled: true
+
+  # -- Azure / Microsoft stack focus --
+  - name: Azure .NET — India (cross-portal)
+    query: '"Azure" ".NET" OR "C#" "Senior" OR "Lead" OR "Architect" India Noida OR Gurgaon OR Bangalore OR Hyderabad OR Pune OR Chennai'
+    enabled: true
+
+  # -- Remote India .NET --
+  - name: Remote .NET — India (cross-portal)
+    query: '".NET Developer" OR ".NET Engineer" "remote" India OR "work from home" senior C#'
+    enabled: true
+
+# -- Tracked companies --
+# Companies with significant .NET hiring in India.
+# scan_method: playwright (default), websearch, greenhouse_api
+
+tracked_companies:
+
+  # -- Global product companies with India offices --
+
+  - name: Microsoft India
+    careers_url: https://careers.microsoft.com
+    scan_method: websearch
+    scan_query: 'site:careers.microsoft.com ".NET" OR "C#" OR "Azure" India Hyderabad OR Noida OR Bangalore senior engineer'
+    notes: "Hyderabad/Noida. Core .NET stack. R&D and engineering roles."
+    enabled: true
+
+  - name: Adobe India
+    careers_url: https://careers.adobe.com
+    scan_method: websearch
+    scan_query: 'site:careers.adobe.com ".NET" OR "C#" senior engineer India Noida OR Bangalore'
+    notes: "Noida/Bangalore. Adobe Experience Platform. .NET backend roles."
+    enabled: true
+
+  - name: Cisco India
+    careers_url: https://jobs.cisco.com
+    scan_method: websearch
+    scan_query: 'site:jobs.cisco.com ".NET" OR "C#" senior engineer India Bangalore OR Pune'
+    notes: "Bangalore. Webex, networking software. Strong .NET R&D."
+    enabled: true
+
+  - name: VMware (Broadcom) India
+    careers_url: https://careers.broadcom.com
+    scan_method: websearch
+    scan_query: 'site:careers.broadcom.com ".NET" OR "C#" senior engineer India Bangalore OR Pune'
+    notes: "Bangalore/Pune. VMware R&D centre. .NET infra/platform roles."
+    enabled: true
+
+  - name: Nutanix India
+    careers_url: https://jobs.nutanix.com
+    scan_method: websearch
+    scan_query: 'site:jobs.nutanix.com ".NET" OR "C#" senior engineer India Bangalore OR Pune'
+    notes: "Bangalore/Pune. Cloud infra product. .NET platform roles."
+    enabled: true
+
+  - name: NetApp India
+    careers_url: https://careers.netapp.com
+    scan_method: websearch
+    scan_query: 'site:careers.netapp.com ".NET" OR "C#" senior engineer India Bangalore OR Hyderabad'
+    notes: "Bangalore/Hyderabad. Storage/cloud product. .NET engineering roles."
+    enabled: true
+
+  - name: Commvault India
+    careers_url: https://www.commvault.com/careers
+    scan_method: websearch
+    scan_query: '"commvault" ".NET" OR "C#" OR "ASP.NET" senior engineer India'
+    notes: "Hyderabad. Data protection product. Heavy .NET codebase."
+    enabled: true
+
+  - name: Trimble India
+    careers_url: https://careers.trimble.com
+    scan_method: websearch
+    scan_query: 'site:careers.trimble.com ".NET" OR "C#" senior India Hyderabad OR Bangalore'
+    notes: "Hyderabad. Construction/geospatial software. .NET-heavy product."
+    enabled: true
+
+  - name: Bentley Systems India
+    careers_url: https://www.bentley.com/careers
+    scan_method: websearch
+    scan_query: 'site:bentley.com/careers ".NET" OR "C#" senior engineer India Hyderabad OR Pune'
+    notes: "Hyderabad/Pune. Infrastructure engineering software. .NET product."
+    enabled: true
+
+  - name: Autodesk India
+    careers_url: https://autodesk.wd1.myworkdayjobs.com/Ext
+    scan_method: websearch
+    scan_query: '"autodesk" ".NET" OR "C#" senior engineer India Hyderabad OR Pune'
+    notes: "Hyderabad/Pune. CAD/CAM software. .NET platform roles."
+    enabled: true
+
+  # -- Indian product unicorns & SaaS --
+
+  - name: Freshworks
+    careers_url: https://www.freshworks.com/company/careers
+    scan_method: websearch
+    scan_query: 'site:freshworks.com/company/careers ".NET" OR "C#" senior engineer India Chennai OR Hyderabad'
+    notes: "Chennai. CRM/ITSM SaaS. Good engineering culture."
+    enabled: true
+
+  - name: Zoho
+    careers_url: https://careers.zohocorp.com
+    scan_method: websearch
+    scan_query: 'site:careers.zohocorp.com ".NET" OR "C#" senior engineer India'
+    notes: "Chennai. 55+ SaaS products. Self-funded. .NET roles available."
+    enabled: true
+
+  - name: Razorpay
+    careers_url: https://razorpay.com/jobs
+    scan_method: websearch
+    scan_query: 'site:razorpay.com/jobs ".NET" OR "C#" OR "backend" senior engineer Bangalore India'
+    notes: "Bangalore. Payments unicorn ($7.5B). .NET backend roles."
+    enabled: true
+
+  - name: PhonePe
+    careers_url: https://www.phonepe.com/careers
+    scan_method: websearch
+    scan_query: 'site:phonepe.com/careers ".NET" OR "C#" senior engineer Bangalore India'
+    notes: "Bangalore. UPI payments leader. .NET microservices."
+    enabled: true
+
+  - name: Paytm
+    careers_url: https://jobs.lever.co/paytm
+    scan_method: websearch
+    scan_query: '"paytm" ".NET" OR "C#" OR "backend" senior engineer Noida India site:jobs.lever.co'
+    notes: "Noida. Fintech. .NET backend and platform roles."
+    enabled: true
+
+  - name: CRED
+    careers_url: https://careers.cred.club
+    scan_method: websearch
+    scan_query: '"cred.club" OR "cred" ".NET" OR "C#" OR "backend" senior engineer Bangalore India'
+    notes: "Bangalore. Fintech unicorn. High-quality engineering bar."
+    enabled: true
+
+  - name: Zerodha
+    careers_url: https://zerodha.com/careers
+    scan_method: websearch
+    scan_query: 'site:zerodha.com/careers ".NET" OR "C#" OR "backend" senior engineer Bangalore India'
+    notes: "Bangalore. Profitable fintech. Small focused team."
+    enabled: true
+
+  - name: Groww
+    careers_url: https://groww.in/careers
+    scan_method: websearch
+    scan_query: 'site:groww.in/careers ".NET" OR "C#" OR "backend" senior engineer Bangalore India'
+    notes: "Bangalore. Investing platform unicorn. .NET backend roles."
+    enabled: true
+
+  - name: BrowserStack
+    careers_url: https://www.browserstack.com/careers
+    scan_method: websearch
+    scan_query: 'site:browserstack.com/careers ".NET" OR "C#" senior engineer India Mumbai OR Hyderabad'
+    notes: "Mumbai. Test infra SaaS. $4B valuation. .NET SDK/platform roles."
+    enabled: true
+
+  - name: Postman
+    careers_url: https://www.postman.com/company/careers
+    scan_method: websearch
+    scan_query: 'site:postman.com/company/careers ".NET" OR "C#" senior engineer Bangalore India'
+    notes: "Bangalore. API platform. .NET SDK and platform engineering."
+    enabled: true
+
+  - name: Chargebee
+    careers_url: https://www.chargebee.com/company/careers
+    scan_method: websearch
+    scan_query: 'site:chargebee.com/company/careers ".NET" OR "C#" senior engineer India Chennai OR Bangalore'
+    notes: "Chennai. Subscription billing SaaS. .NET SDK and integrations."
+    enabled: true
+
+  - name: Swiggy
+    careers_url: https://careers.swiggy.com
+    scan_method: websearch
+    scan_query: 'site:careers.swiggy.com ".NET" OR "C#" OR "backend" senior engineer Bangalore India'
+    notes: "Bangalore. Food delivery unicorn. Microservices .NET roles."
+    enabled: true
+
+  - name: Zomato
+    careers_url: https://www.zomato.com/careers
+    scan_method: websearch
+    scan_query: 'site:zomato.com/careers ".NET" OR "C#" OR "backend" senior engineer Gurgaon India'
+    notes: "Gurgaon. Food delivery. Listed company. Platform engineering roles."
+    enabled: true
+
+  - name: InMobi
+    careers_url: https://www.inmobi.com/company/careers
+    scan_method: websearch
+    scan_query: 'site:inmobi.com/company/careers ".NET" OR "C#" senior engineer Bangalore India'
+    notes: "Bangalore. AdTech unicorn. .NET platform/data roles."
+    enabled: true
+
+  - name: Leadsquared
+    careers_url: https://www.leadsquared.com/careers
+    scan_method: websearch
+    scan_query: 'site:leadsquared.com/careers ".NET" OR "C#" OR "ASP.NET" senior engineer Bangalore India'
+    notes: "Bangalore. CRM/marketing automation SaaS. Heavy .NET stack."
+    enabled: true
+
+  - name: Darwinbox
+    careers_url: https://darwinbox.com/about/careers
+    scan_method: websearch
+    scan_query: '"darwinbox" ".NET" OR "C#" senior engineer Hyderabad India'
+    notes: "Hyderabad. HR SaaS unicorn. .NET backend roles."
+    enabled: true
+
+  - name: Unacademy
+    careers_url: https://unacademy.com/careers
+    scan_method: websearch
+    scan_query: 'site:unacademy.com/careers ".NET" OR "C#" OR "backend" senior engineer Bangalore India'
+    notes: "Bangalore. EdTech unicorn. .NET backend/platform roles."
+    enabled: true
+
+  # -- NCR-based product companies --
+
+  - name: Newgen Software
+    careers_url: https://newgensoft.com/careers
+    scan_method: websearch
+    scan_query: '"newgensoft" OR "newgen software" ".NET" OR "C#" senior engineer Noida India'
+    notes: "Noida HQ. BPM/ECM product company. Core .NET product."
+    enabled: true
+
+  - name: GreyOrange
+    careers_url: https://www.greyorange.com/careers
+    scan_method: websearch
+    scan_query: '"greyorange" ".NET" OR "C#" senior engineer Gurgaon India'
+    notes: "Gurgaon. Warehouse robotics & AI. .NET platform roles."
+    enabled: true
+
+  - name: IndiaMart
+    careers_url: https://www.indiamart.com/careers
+    scan_method: websearch
+    scan_query: 'site:indiamart.com/careers ".NET" OR "C#" OR "backend" senior engineer Noida India'
+    notes: "Noida. B2B marketplace. Listed company. .NET backend roles."
+    enabled: true
+
+  - name: Info Edge (Naukri)
+    careers_url: https://infoedge.in/careers
+    scan_method: websearch
+    scan_query: '"info edge" OR "naukri" ".NET" OR "C#" senior engineer Noida India'
+    notes: "Noida. India's top job portal (Naukri, 99acres). .NET product roles."
+    enabled: true
+
+  - name: PolicyBazaar
+    careers_url: https://www.policybazaar.com/careers
+    scan_method: websearch
+    scan_query: 'site:policybazaar.com/careers ".NET" OR "C#" OR "backend" senior engineer Gurgaon India'
+    notes: "Gurgaon. Insurtech unicorn. .NET backend and platform."
+    enabled: true
+
+  - name: MakeMyTrip
+    careers_url: https://careers.makemytrip.com
+    scan_method: websearch
+    scan_query: 'site:careers.makemytrip.com ".NET" OR "C#" OR "backend" senior engineer Gurgaon India'
+    notes: "Gurgaon. OTA unicorn. .NET platform/backend engineering."
+    enabled: true

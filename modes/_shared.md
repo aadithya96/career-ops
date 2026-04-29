@@ -29,7 +29,7 @@ The evaluation uses 6 blocks (A-F) with a global score of 1-5:
 
 | Dimension | What it measures |
 |-----------|-----------------|
-| Match con CV | Skills, experience, proof points alignment |
+| CV Match | Skills, experience, proof points alignment |
 | North Star alignment | How well the role fits the user's target archetypes (from _profile.md) |
 | Comp | Salary vs market (5=top quartile, 1=well below) |
 | Cultural signals | Company culture, growth, stability, remote policy |
@@ -42,6 +42,17 @@ The evaluation uses 6 blocks (A-F) with a global score of 1-5:
 - 3.5-3.9 → Decent but not ideal, apply only if specific reason
 - Below 3.5 → Recommend against applying (see Ethical Use in CLAUDE.md)
 
+| Archetype | Thematic axes | What they buy |
+|-----------|---------------|---------------|
+| **Senior Backend Engineer (.NET/C#)** | APIs, microservices, performance, reliability | Someone who ships production-grade .NET systems at scale |
+| **Staff / Principal Backend Engineer** | Architecture, tech leadership, cross-team impact | Someone who drives technical direction across services |
+| **Platform / Infrastructure Engineer** | Developer tooling, CI/CD, observability, reliability | Someone who makes the engineering org faster and safer |
+| **Backend-Focused Full Stack Engineer** | .NET backend + lightweight frontend, end-to-end delivery | Someone who owns the full feature vertical |
+| **Solutions / Integration Engineer** | Enterprise integrations, APIs, third-party systems | Someone who connects systems cleanly and reliably |
+| **Engineering Lead / Tech Lead** | Technical oversight, delivery, mentoring, architecture | Someone who leads a team while staying hands-on |
+
+<!-- [CUSTOMIZE] Edit the archetypes above to match YOUR target roles. -->
+
 ## Posting Legitimacy (Block G)
 
 Block G assesses whether a posting is likely a real, active opening. It does NOT affect the 1-5 global score -- it is a separate qualitative assessment.
@@ -50,6 +61,15 @@ Block G assesses whether a posting is likely a real, active opening. It does NOT
 - **High Confidence** -- Real, active opening (most signals positive)
 - **Proceed with Caution** -- Mixed signals, worth noting (some concerns)
 - **Suspicious** -- Multiple ghost indicators, user should investigate first
+
+| If the role is... | Emphasize about the candidate... | Proof point sources |
+|-------------------|----------------------------------|---------------------|
+| Senior Backend (.NET/C#) | Production APIs, performance, reliability, clean architecture | cv.md + article-digest.md |
+| Staff / Principal | System design, tech decisions, cross-team influence, mentoring | cv.md + article-digest.md |
+| Platform / Infrastructure | CI/CD ownership, observability, DevEx improvements, reliability | article-digest.md + cv.md |
+| Backend Full Stack | End-to-end feature delivery, .NET backend + thin frontend layer | cv.md + article-digest.md |
+| Solutions / Integration | API design, third-party integrations, enterprise connectivity | article-digest.md + cv.md |
+| Engineering Lead | Delivery track record, technical mentorship, hands-on leadership | cv.md + article-digest.md |
 
 **Key signals (weighted by reliability):**
 
@@ -76,14 +96,77 @@ Classify every offer into one of these types (or hybrid of 2):
 
 | Archetype | Key signals in JD |
 |-----------|-------------------|
-| AI Platform / LLMOps | "observability", "evals", "pipelines", "monitoring", "reliability" |
-| Agentic / Automation | "agent", "HITL", "orchestration", "workflow", "multi-agent" |
-| Technical AI PM | "PRD", "roadmap", "discovery", "stakeholder", "product manager" |
-| AI Solutions Architect | "architecture", "enterprise", "integration", "design", "systems" |
-| AI Forward Deployed | "client-facing", "deploy", "prototype", "fast delivery", "field" |
-| AI Transformation | "change management", "adoption", "enablement", "transformation" |
+| Senior Backend (.NET/C#) | ".NET", "C#", "ASP.NET", "Entity Framework", "microservices", "REST APIs" |
+| Staff / Principal | "architecture", "technical direction", "cross-team", "principal", "staff" |
+| Platform / Infrastructure | "CI/CD", "observability", "developer experience", "reliability", "Kubernetes", "AKS" |
+| Backend Full Stack | ".NET backend", "React/Angular/Vue", "full stack", "end-to-end" |
+| Solutions / Integration | "integration", "enterprise", "third-party", "API design", "solutions architect" |
+| Engineering Lead | "tech lead", "technical lead", "engineering lead", "team lead", "mentoring" |
 
 After detecting archetype, read `modes/_profile.md` for the user's specific framing and proof points for that archetype.
+
+Frame profile as **"Backend engineer who ships production-grade systems with real-world proof"** that adapts framing to the role:
+- For Senior Backend: "engineer who owns the full lifecycle — design, delivery, performance, reliability"
+- For Staff/Principal: "engineer who makes the right call on architecture and brings the team along"
+- For Platform: "engineer who multiplies team velocity through better tooling, CI/CD, and observability"
+- For Solutions/Integration: "engineer who connects complex systems cleanly without coupling everything together"
+- For Engineering Lead: "hands-on lead who ships and mentors — doesn't choose between the two"
+
+Convert technical depth into a leadership and delivery signal. Real proof points make this credible.
+
+### Portfolio as Proof Point (use in high-value applications)
+
+<!-- [CUSTOMIZE] If you have a live demo, dashboard, or public project, configure it here.
+     Example:
+     dashboard:
+       url: "https://yoursite.dev/demo"
+       password: "demo-2026"
+       when_to_share: "LLMOps, AI Platform, observability roles"
+     Read from config/profile.yml → narrative.proof_points and narrative.dashboard -->
+
+If the candidate has a live demo/dashboard (check profile.yml), offer access in applications for relevant roles.
+
+### Comp Intelligence
+
+<!-- [CUSTOMIZE] Research comp ranges for YOUR target roles and update these ranges -->
+
+**General guidance:**
+- Use WebSearch for current market data (Glassdoor, Levels.fyi, Blind)
+- Frame by role title, not by skills -- titles determine comp bands
+- Contractor rates are typically 30-50% higher than employee base to account for benefits
+- Geographic arbitrage works for remote roles: lower CoL = better net
+
+### Negotiation Scripts
+
+<!-- [CUSTOMIZE] Adapt these to your situation -->
+
+**Salary expectations (general framework):**
+> "Based on market data for this role, I'm targeting [RANGE from profile.yml]. I'm flexible on structure -- what matters is the total package and the opportunity."
+
+**Geographic discount pushback:**
+> "The roles I'm competitive for are output-based, not location-based. My track record doesn't change based on postal code."
+
+**When offered below target:**
+> "I'm comparing with opportunities in the [higher range]. I'm drawn to [company] because of [reason]. Can we explore [target]?"
+
+### Location Policy
+
+<!-- [CUSTOMIZE] Adapt to your situation. Read from config/profile.yml → location -->
+
+**In forms:**
+- Binary "can you be on-site?" questions: follow your actual availability from profile.yml
+- In free-text fields: specify your timezone overlap and availability
+
+**In evaluations (scoring):**
+- Remote dimension for hybrid outside your country: score **3.0** (not 1.0)
+- Only score 1.0 if JD explicitly says "must be on-site 4-5 days/week, no exceptions"
+
+### Time-to-offer priority
+- Working demo + metrics > perfection
+- Apply sooner > learn more
+- 80/20 approach, timebox everything
+
+---
 
 ## Global Rules
 
