@@ -1,0 +1,56 @@
+name: Daily Job Scan
+
+on:
+  schedule:
+    - cron: '0 8 * * *'   # 8:00 AM UTC daily
+  workflow_dispatch:        # allow manual trigger
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - run: npm install
+
+      - name: Restore scan state
+        uses: actions/cache@v4
+        with:
+          path: |
+            data/scan-history.tsv
+            data/pipeline.md
+          key: scan-state-${{ github.run_id }}
+          restore-keys: |
+            scan-state-
+
+      - name: Ensure data directory exists
+        run: mkdir -p data
+
+      - name: Run job scan
+        run: node scan.mjs 2>&1 | tee scan-output.txt
+
+      - name: Save scan state
+        uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: |
+            data/scan-history.tsv
+            data/pipeline.md
+          key: scan-state-${{ github.run_id }}
+
+      - name: Report new findings
+        run: |
+          NEW=$(grep -c "^|" data/pipeline.md 2>/dev/null || echo 0)
+          echo "## Daily Job Scan — $(date -u +%Y-%m-%d)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          cat scan-output.txt >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Pipeline entries after scan: $NEW" >> $GITHUB_STEP_SUMMARY
