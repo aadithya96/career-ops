@@ -1,0 +1,41 @@
+name: Daily Job Scan
+
+on:
+  schedule:
+    - cron: '0 7 * * *'   # 07:00 UTC every day
+  workflow_dispatch:        # allow manual trigger from GitHub UI
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run portal scanner
+        run: node scan.mjs
+
+      - name: Commit new findings
+        run: |
+          git config user.name  "career-ops[bot]"
+          git config user.email "career-ops[bot]@users.noreply.github.com"
+          git add data/pipeline.md data/scan-history.tsv
+          if git diff --cached --quiet; then
+            echo "No new job postings found."
+          else
+            COUNT=$(git diff --cached --stat | grep -oP '\d+(?= insertion)' | head -1)
+            git commit -m "chore: daily scan — ${COUNT:-?} new line(s) [skip ci]"
+            git push origin main
+            echo "Pushed new findings to main."
+          fi
